@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <title>
+            Walmart Visitor Log
+        </title>
+
+        <!-- Bootstrap CDN-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container">
+            <br>
+
+            <!-- For Image Logo-->
+            <div class="row">
+                <div class="col-2">
+
+                </div>
+                <div class="col-4">
+                    <img src="https://heartofcodes.com/wp-content/uploads/2018/09/Walmart-Logo-PNG-Transparent-768x219.png" style="width:100%">
+                </div>
+                <div class="col-4">
+                    <h1 style="text-align:center;margin-top:30px">
+                        | Walmart Visitor Log
+                    </h1>
+                </div>
+                <div class="col-2">
+
+                </div>
+            </div>
+            <!-- For image Logo-->
+           
+            <!-- 2nd Section Image and form start-->
+            <div class="row">
+                
+                <div class="col-6">
+                    <img src="https://img.freepik.com/free-vector/big-isolated-employee-working-office-workplace-flat-illustration_1150-41780.jpg" style="width:100%;">
+                </div>
+                <div class="col-6">
+                    <br>
+                    <br>
+                    <h5><b>Fill the option below</b></h5>
+                    <br>
+                    
+                    <p>
+                        <label>Gender</label>
+                        <select id="gender" class="form-control">
+                            <option disabled selected value="">--SELECT--</option>
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                        </select>
+                        <span id="errGenderMsg" style="color:red"></span>
+                    </p>
+
+                    <br>
+                    <p>
+                        <label>Age Group</label>
+                        <select id="ageGroup" class="form-control">
+                            <option disabled selected value="">--SELECT--</option>
+                            <option value="1">Kids(1-12)</option>
+                            <option value="2">Teenagers(13-19)</option>
+                            <option value="3">Younsters(20-29)</option>
+                            <option value="4">Adult(30-59)</option>
+                            <option value="5">Senior Citizen (Above 60)</option>
+                        </select>
+                        <span id="errAgeGroupMsg" style="color:red"></span>
+                    </p>
+
+                    <br>
+                    <button class="btn btn-primary" onclick="validateForm()" style="width:100%">Submit</button>
+                    <span id="successMsg" style="color:green"></span>
+                </div>
+            </div>
+            <!-- 2nd section image and form End -->
+        </div>
+        <!-- Java Script-->
+        <script>
+            function validateForm()
+            {
+                //Fetch value from gender select
+                var gender=document.getElementById("gender").value;
+                if(gender=="")
+                {
+                    document.getElementById("errGenderMsg").innerHTML="Please select the gender"
+                    return false
+                }
+                else
+                {
+                    document.getElementById("errGenderMsg").innerHTML=""
+                }
+            
+            //Fetch value from age group
+                var ageGroup=document.getElementById("ageGroup").value;
+                if(ageGroup=="")
+                {
+                    document.getElementById("errAgeGroupMsg").innerHTML="Please select the age group"
+                    return false
+                }
+                else
+                {
+                    document.getElementById("errAgeGroupMsg").innerHTML=""
+                }
+                //AJAX for sending data to server
+                var xhttpVisitors=new XMLHttpRequest();
+                xhttpVisitors.onreadystatechange=function() {
+                    if(this.readyState == 4 && this.status == 200)
+                    {
+                        document.getElementById("successMsg").innerHTML=this.responseText
+                        console.log(this.responseText)
+                    }
+
+                }
+                xhttpVisitors.open('POST','http://127.0.0.1:5000/log-visitors',true)
+                xhttpVisitors.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+                xhttpVisitors.send('gender='+gender+'&age-group='+ageGroup);
+
+        }
+            
+        </script>
+
+        <!-- Java script end-->
+    </body>
+</html>

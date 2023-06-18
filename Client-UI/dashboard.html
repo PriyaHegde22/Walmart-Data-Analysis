@@ -1,0 +1,244 @@
+<html>
+    <head>
+        <title>
+            Analytics Dashboard
+        </title>
+        <!-- Bootstrap CDN-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+        <!-- Chart JS CDN-->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container">
+            <br>
+            <h3>Analytics Dashboard</h3>
+            <br>
+            <!-- Card View Start-->
+            <div class="row">
+                <div class="col-3">
+                    <!-- Card view with color Start -->
+                    <div class="card" style="background-color:teal;color:white">
+                        <div class="card-body">
+                            <h4 class="card-title">Today's visitors</h4>
+                            <h2 class="card-text" id="today-visitors"></h2>
+                        </div>
+                    </div>
+                    <!-- Card view with color End -->
+                </div>
+                <div class="col-3">
+                    <!-- Card view with color Start -->
+                    <div class="card" style="background-color:darkmagenta;color:white">
+                        <div class="card-body">
+                            <h4 class="card-title">Overall visitors</h4>
+                            <h2 class="card-text" id="overall-visitors"></h2>
+                        </div>
+                    </div>
+                    <!-- Card view with color End -->
+                </div>
+                <div class="col-3">
+                    <!-- Card view with color Start -->
+                    <div class="card" style="background-color:darkslateblue;color:white">
+                        <div class="card-body">
+                            <h4 class="card-title">Male visitors (Today)</h4>
+                            <h2 class="card-text" id="male-today-visitors"></h2>
+                        </div>
+                    </div>
+                    <!-- Card view with color End -->
+                </div>
+                <div class="col-3">
+                    <!-- Card view with color Start -->
+                    <div class="card" style="background-color:maroon;color:white">
+                        <div class="card-body">
+                            <h4 class="card-title">Female visitors (Today)</h4>
+                            <h2 class="card-text" id="female-today-visitors"></h2>
+                        </div>
+                    </div>
+                    <!-- Card view with color End -->
+                </div>
+            </div>
+            <!-- Card View End -->
+            <br>
+            <br>
+            <!-- Table and Graph Start -->
+            <div class="row">
+                
+                <div class="col-6">
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <td>Sl</td>
+                                <td>Gender / Age Group</td>
+                                <td>Today's Visitors</td>
+                                <td>Overall Visitors</td>
+                            </tr>
+                        </thead>
+                        <tbody id="table-data">
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-6">
+                    <br>
+                    <br>
+                    <br>
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Table and Graph End-->
+        </div>
+
+        <script>
+            
+
+            /* AJAX - Today's visitors start */
+            var xhttpTVisitors=new XMLHttpRequest();
+                xhttpTVisitors.onreadystatechange=function() {
+                    if(this.readyState == 4 && this.status == 200)
+                    {
+                        //console.log(this.responseText)
+                        var jsonData = JSON.parse(this.responseText)
+                        var todayVisitorCount = jsonData[0].today_visitors
+                        document.getElementById("today-visitors").innerHTML=todayVisitorCount
+                    }
+
+                }
+                xhttpTVisitors.open('GET','http://127.0.0.1:5000/today-visitors',true)
+                xhttpTVisitors.send();
+            /* AJAX - Today's visitors end */
+
+            /* AJAX - Overall visitors start */
+            var xhttpOVisitors=new XMLHttpRequest();
+                xhttpOVisitors.onreadystatechange=function() {
+                    if(this.readyState == 4 && this.status == 200)
+                    {
+                        //console.log(this.responseText)
+                        var jsonData = JSON.parse(this.responseText)
+                        var overallVisitorCount = jsonData[0].overall_visitors
+                        document.getElementById("overall-visitors").innerHTML=overallVisitorCount
+                    }
+
+                }
+                xhttpOVisitors.open('GET','http://127.0.0.1:5000/overall-visitors',true)
+                xhttpOVisitors.send();
+            /* AJAX - Overall visitors end */
+
+            /* AJAX - Today's male visitors start */
+            var xhttpMVisitors=new XMLHttpRequest();
+            xhttpMVisitors.onreadystatechange=function() {
+                if(this.readyState == 4 && this.status == 200)
+                {
+                    //console.log(this.responseText)
+                    var jsonData = JSON.parse(this.responseText)
+                    var maleVisitorCount = jsonData[0].male_visitors
+                    document.getElementById("male-today-visitors").innerHTML=maleVisitorCount
+                }
+
+            }
+            xhttpMVisitors.open('GET','http://127.0.0.1:5000/male-today-visitors',true)
+            xhttpMVisitors.send();
+
+            /* AJAX - Today's male visitors end */
+
+            /* AJAX - Today's female visitors start */
+            var xhttpFVisitors=new XMLHttpRequest();
+            xhttpFVisitors.onreadystatechange=function() {
+                if(this.readyState == 4 && this.status == 200)
+                {
+                    //console.log(this.responseText)
+                    var jsonData = JSON.parse(this.responseText)
+                    var femaleVisitorCount = jsonData[0].female_visitors
+                    document.getElementById("female-today-visitors").innerHTML=femaleVisitorCount
+                }
+
+            }
+            xhttpFVisitors.open('GET','http://127.0.0.1:5000/female-today-visitors',true)
+            xhttpFVisitors.send();
+            /* AJAX - Today's female visitors end */
+
+            /* AJAX for table data start*/
+            var xhttpTableData=new XMLHttpRequest();
+            xhttpTableData.onreadystatechange=function() {
+                if(this.readyState == 4 && this.status == 200)
+                {
+                    
+                    var jsonData = JSON.parse(this.responseText)
+                    //console.log(this.responseText)
+                    var jsonLength = jsonData.length
+                    var tableStructure = ''
+                    var sl = 0
+                    for(i=0;i<jsonLength;i++)
+                    {
+                        sl++
+                        tableStructure+='<tr>'
+                        tableStructure+='<td>'+sl+'</td>'
+                        tableStructure+='<td>'+jsonData[i].gender+'/'+jsonData[i].age_group+'</td>'
+                        tableStructure+='<td>'+jsonData[i].today_visitors+'</td>'
+                        tableStructure+='<td>'+jsonData[i].overall_visitors+'</td>'
+                        tableStructure+='</tr>'
+                        
+                    }
+                    document.getElementById("table-data").innerHTML=tableStructure
+                }
+
+            }
+            xhttpTableData.open('GET','http://127.0.0.1:5000/table-data',true)
+            xhttpTableData.send();
+            /* AJAX Table data end */
+
+            /* AJAX BAR GRAPH start */
+            var xhttpBarGraph=new XMLHttpRequest();
+            xhttpBarGraph.onreadystatechange=function() {
+                if(this.readyState == 4 && this.status == 200)
+                {
+                    console.log(this.responseText)
+                    var jsonData = JSON.parse(this.responseText)
+                    var jsonLength = jsonData.length
+                    var arr = []
+
+                    for(var j = 0;j < jsonLength;j++)
+                    {
+                        arr.push(jsonData[j].month)
+                    }
+
+                    // pass the value to the graph
+                    
+                    const ctx = document.getElementById('myChart');
+          
+                    new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                    label: '# of Visitors',
+                    data: arr,
+                    borderWidth: 1
+                    }]
+                    },
+                    options: {
+                    scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                    }
+                }
+                });
+
+                }
+
+            }
+            xhttpBarGraph.open('GET','http://127.0.0.1:5000/graph-data',true)
+            xhttpBarGraph.send();
+            /* AJAX BAR GRAPH end */
+
+          </script>
+          
+    </body>
+</html>
